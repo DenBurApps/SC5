@@ -604,10 +604,10 @@ RectTransform:
   - {fileID: 1439555888}
   m_Father: {fileID: 1208895386}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.04676321, y: 0.04676211}
+  m_AnchorMax: {x: 0.95323676, y: 0.9532379}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -101.008545, y: -218.53711}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &213614947
 MonoBehaviour:
@@ -786,6 +786,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5944576943084558559, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bcc8c29c3c374645afe20bfe127be6f, type: 3}
     - target: {fileID: 6633967793794335958, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
       propertyPath: m_Name
       value: Slot (2)
@@ -1684,7 +1688,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e84c988300dc7f640b64b79e61d6e9c1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 07c1acc7010887342a207573fdd0f384, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -3171,6 +3175,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5944576943084558559, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bcc8c29c3c374645afe20bfe127be6f, type: 3}
     - target: {fileID: 6633967793794335958, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
       propertyPath: m_Name
       value: Slot
@@ -3438,7 +3446,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 41.25
+  m_fontSize: 43.25
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3710,6 +3718,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5944576943084558559, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bcc8c29c3c374645afe20bfe127be6f, type: 3}
     - target: {fileID: 6633967793794335958, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
       propertyPath: m_Name
       value: Slot (1)
@@ -4584,6 +4596,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5944576943084558559, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bcc8c29c3c374645afe20bfe127be6f, type: 3}
     - target: {fileID: 6633967793794335958, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
       propertyPath: m_Name
       value: Slot
@@ -5287,18 +5303,18 @@ MonoBehaviour:
   - {fileID: 765146087}
   - {fileID: 1216423659}
   _items:
-  - {fileID: 11400000, guid: 1b644a816c53c984789fff22bf49ee78, type: 2}
-  - {fileID: 11400000, guid: bd8acfab3e85547469f62c0e9c6fdf08, type: 2}
+  - {fileID: 11400000, guid: c40d7854e91c5f542968bb36400aefff, type: 2}
+  - {fileID: 11400000, guid: 52adaf77adfb8124d94007c58d8f519b, type: 2}
   - {fileID: 11400000, guid: 53bccb207a942414d84c34756534ede1, type: 2}
-  - {fileID: 11400000, guid: 784652f466959a4409c71fe9719001f3, type: 2}
-  - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  - {fileID: 11400000, guid: bd8acfab3e85547469f62c0e9c6fdf08, type: 2}
-  - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
+  - {fileID: 11400000, guid: 0540e5d0ca60dae4ba0fd886466df071, type: 2}
+  - {fileID: 11400000, guid: 4c030d9d49198d44c960a4b63cb4497b, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
+  - {fileID: 11400000, guid: 52adaf77adfb8124d94007c58d8f519b, type: 2}
+  - {fileID: 11400000, guid: 4c030d9d49198d44c960a4b63cb4497b, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
+  - {fileID: 11400000, guid: 4c030d9d49198d44c960a4b63cb4497b, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
   _spinSpeed: 40
   _spinDuration: 2
   _verticalOffset: 9
@@ -5563,6 +5579,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5944576943084558559, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bcc8c29c3c374645afe20bfe127be6f, type: 3}
     - target: {fileID: 6633967793794335958, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
       propertyPath: m_Name
       value: Slot (2)
@@ -6314,6 +6334,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5944576943084558559, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bcc8c29c3c374645afe20bfe127be6f, type: 3}
     - target: {fileID: 6633967793794335958, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
       propertyPath: m_Name
       value: Slot (2)
@@ -6441,7 +6465,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 40bbf9e6c50037e4dad17eae4cfba46b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: dc2a7967b19a09b4791eb6256b98d645, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -6543,7 +6567,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 42.1
+  m_fontSize: 44.1
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -6859,7 +6883,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2a700d53302d1d444ad422f3e0b2ad90, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 91e868de296c7f345b4b1985b83d2589, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -7088,6 +7112,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5944576943084558559, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bcc8c29c3c374645afe20bfe127be6f, type: 3}
     - target: {fileID: 6633967793794335958, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
       propertyPath: m_Name
       value: Slot (1)
@@ -7586,7 +7614,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ab2c91d01da4c0344a20e7c705bb5948, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 86f211c9996db1148a17c6341a687743, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -7697,8 +7725,8 @@ RectTransform:
   - {fileID: 727616048}
   m_Father: {fileID: 213614946}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.051477186, y: 0.23554075}
-  m_AnchorMax: {x: 0.9485227, y: 0.72593385}
+  m_AnchorMin: {x: 0.030230837, y: 0.23556519}
+  m_AnchorMax: {x: 0.96976894, y: 0.7553711}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7817,7 +7845,7 @@ MonoBehaviour:
       Multiplier: 500
     - HitCount: 3
       Multiplier: 1000
-  - SlotType: 2
+  - SlotType: 6
     Multipliers:
     - HitCount: 1
       Multiplier: 1
@@ -7825,7 +7853,7 @@ MonoBehaviour:
       Multiplier: 2
     - HitCount: 3
       Multiplier: 3
-  - SlotType: 3
+  - SlotType: 7
     Multipliers:
     - HitCount: 1
       Multiplier: 3
@@ -7833,7 +7861,7 @@ MonoBehaviour:
       Multiplier: 6
     - HitCount: 3
       Multiplier: 9
-  - SlotType: 4
+  - SlotType: 8
     Multipliers:
     - HitCount: 1
       Multiplier: 6
@@ -7841,7 +7869,7 @@ MonoBehaviour:
       Multiplier: 10
     - HitCount: 3
       Multiplier: 15
-  - SlotType: 5
+  - SlotType: 9
     Multipliers:
     - HitCount: 1
       Multiplier: 20
@@ -7920,18 +7948,18 @@ MonoBehaviour:
   - {fileID: 1341331097}
   - {fileID: 243589058}
   _items:
-  - {fileID: 11400000, guid: 1b644a816c53c984789fff22bf49ee78, type: 2}
-  - {fileID: 11400000, guid: bd8acfab3e85547469f62c0e9c6fdf08, type: 2}
+  - {fileID: 11400000, guid: c40d7854e91c5f542968bb36400aefff, type: 2}
+  - {fileID: 11400000, guid: 52adaf77adfb8124d94007c58d8f519b, type: 2}
   - {fileID: 11400000, guid: 53bccb207a942414d84c34756534ede1, type: 2}
-  - {fileID: 11400000, guid: 784652f466959a4409c71fe9719001f3, type: 2}
-  - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  - {fileID: 11400000, guid: bd8acfab3e85547469f62c0e9c6fdf08, type: 2}
-  - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
+  - {fileID: 11400000, guid: 0540e5d0ca60dae4ba0fd886466df071, type: 2}
+  - {fileID: 11400000, guid: 4c030d9d49198d44c960a4b63cb4497b, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
+  - {fileID: 11400000, guid: 52adaf77adfb8124d94007c58d8f519b, type: 2}
+  - {fileID: 11400000, guid: 4c030d9d49198d44c960a4b63cb4497b, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
+  - {fileID: 11400000, guid: 4c030d9d49198d44c960a4b63cb4497b, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
   _spinSpeed: 40
   _spinDuration: 2
   _verticalOffset: 9
@@ -9364,6 +9392,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5944576943084558559, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bcc8c29c3c374645afe20bfe127be6f, type: 3}
     - target: {fileID: 6633967793794335958, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
       propertyPath: m_Name
       value: Slot (1)
@@ -9580,7 +9612,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b472364ee9a01e2489fb1d06430831ca, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 56c0e0664373f6542a5a7755d32c3807, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -9836,7 +9868,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a95568c110eddb44289d7876971d1b83, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4d39e2d5a452b8f44b7bc0d8248a419c, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -10025,7 +10057,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2db2f8e76be58eb4292e4727acd64fc6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6bcc8c29c3c374645afe20bfe127be6f, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -10373,18 +10405,18 @@ MonoBehaviour:
   - {fileID: 1860810617}
   - {fileID: 1167116047}
   _items:
-  - {fileID: 11400000, guid: 1b644a816c53c984789fff22bf49ee78, type: 2}
-  - {fileID: 11400000, guid: bd8acfab3e85547469f62c0e9c6fdf08, type: 2}
+  - {fileID: 11400000, guid: c40d7854e91c5f542968bb36400aefff, type: 2}
+  - {fileID: 11400000, guid: 52adaf77adfb8124d94007c58d8f519b, type: 2}
   - {fileID: 11400000, guid: 53bccb207a942414d84c34756534ede1, type: 2}
-  - {fileID: 11400000, guid: 784652f466959a4409c71fe9719001f3, type: 2}
-  - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  - {fileID: 11400000, guid: bd8acfab3e85547469f62c0e9c6fdf08, type: 2}
-  - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
-  - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
+  - {fileID: 11400000, guid: 0540e5d0ca60dae4ba0fd886466df071, type: 2}
+  - {fileID: 11400000, guid: 4c030d9d49198d44c960a4b63cb4497b, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
+  - {fileID: 11400000, guid: 52adaf77adfb8124d94007c58d8f519b, type: 2}
+  - {fileID: 11400000, guid: 4c030d9d49198d44c960a4b63cb4497b, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
+  - {fileID: 11400000, guid: 4c030d9d49198d44c960a4b63cb4497b, type: 2}
+  - {fileID: 11400000, guid: 1e8d2c3231dc5c645ae87e8f5fa153c4, type: 2}
   _spinSpeed: 40
   _spinDuration: 2
   _verticalOffset: 9
@@ -10789,7 +10821,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1cecdb14b47208a4fae2b80316f14ba2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6dc146c4cabccd640aab1034aa60c650, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10866,7 +10898,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 4faa47e0e6b7d8546b391864198b940d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 50156272604f6f647aaacf96cc5eee7d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11063,8 +11095,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1704473257}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.19060001, y: 0.7798004}
-  m_AnchorMax: {x: 0.8322807, y: 0.85567015}
+  m_AnchorMin: {x: 0.09769834, y: 0.7902954}
+  m_AnchorMax: {x: 0.8837112, y: 0.8753937}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -11088,7 +11120,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a9d0893d744543c46948b4103a4dec71, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9af925b7fde58f243a4a21229a86056d, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -11328,6 +11360,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5944576943084558559, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6bcc8c29c3c374645afe20bfe127be6f, type: 3}
     - target: {fileID: 6633967793794335958, guid: 06b5e5d387462f24a9e379322a5d5b66, type: 3}
       propertyPath: m_Name
       value: Slot

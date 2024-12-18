@@ -21,6 +21,10 @@ namespace Games
         Bongo,
         Rice,
         Flower,
-        
+        [Header("BambooFortune")]
+        Banana,
+        Cherry,
+        Grape,
+        Melon,
     }
 }
