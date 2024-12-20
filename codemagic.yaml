@@ -3,12 +3,12 @@ workflows:
     name: Unity iOS Workflow
     max_build_duration: 120
     integrations:
-      app_store_connect: ApiKey
+      app_store_connect: SC5Key
     environment:
       unity: 2022.3.19f1
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: bandle
+        bundle_identifier: com.SC5.bndl
       groups:
         - unity_credentials
       vars:
@@ -16,8 +16,8 @@ workflows:
         XCODE_PROJECT: "Unity-iPhone.xcodeproj"
         XCODE_WORKSPACE: "Unity-iPhone.xcworkspace"
         XCODE_SCHEME: "Unity-iPhone"
-        BUNDLE_ID: "bandle"
-        APP_STORE_APPLE_ID: APPID
+        BUNDLE_ID: "com.SC5.bndl"
+        APP_STORE_APPLE_ID: 6738836845
       cocoapods: default
     scripts:
       - name: Activate Unity license
