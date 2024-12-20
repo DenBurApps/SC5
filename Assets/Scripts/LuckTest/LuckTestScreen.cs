@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DailyBonus;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace LuckTest
 {
@@ -23,35 +25,60 @@ namespace LuckTest
         [SerializeField] private Button _showAllChestsButton;
         [SerializeField] private Button _tryButton;
         [SerializeField] private GameObject _notEnoughBalancePopup;
-        
-        private readonly int[] _availableCoins = { 5, 15, 30, 35, 40, 45, 50, 55, 60, 65, 75, 80, 85, 90, 95, 100 };
+        [SerializeField] private GameObject _mainScreen;
+        [SerializeField] private CanvasGroup _canvasGroup;
+
+        private readonly int[] _availableCoins =
+        {
+            5, 15, 15, 15, 15, 30, 30, 30, 35, 35, 35, 35, 40, 40, 40, 40, 40, 40, 40, 45, 50, 50, 50, 55, 55, 55, 60,
+            60, 65, 65, 75, 80, 85, 90, 95, 100
+        };
+
         private readonly int _bigScore = 2000;
-      
+
         private int _chestsToOpen;
         private int _totalWin;
         private List<Chest> _openedChests = new List<Chest>();
 
-        private void OnEnable()
+        private void Start()
         {
+            DisableScreen();
+        }
+
+        public void EnableScreen()
+        {
+            _canvasGroup.alpha = 1;
+            _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = true;
             InitializeScreen();
         }
 
-        private void OnDisable()
+        public void DisableScreen()
         {
+            _canvasGroup.alpha = 0;
+            _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
+
             CleanupScreen();
         }
 
         private void InitializeScreen()
         {
             ResetScreen();
-            
+
             foreach (var chest in _chests)
             {
                 chest.Enable(GetRandomCoinValue());
                 chest.Opened += OnChestOpened;
             }
 
-            SetBigScoreChest();
+            int randomNumber = Random.Range(0, 2);
+
+            if (randomNumber == 1)
+            {
+                SetBigScoreChest();
+            }
+
             _chestsToOpen = InitialChestsToOpen;
 
             UpdateTopText();
@@ -139,7 +166,7 @@ namespace LuckTest
         private void OnGetButtonClicked()
         {
             PlayerBalanceController.IncreaseBalance(_totalWin);
-            gameObject.SetActive(false);
+            DisableScreen();
         }
 
         private void SetBigScoreChest()

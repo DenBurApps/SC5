@@ -66,7 +66,7 @@ namespace MainScreen
                 var json = File.ReadAllText(_savePath);
                 var wrapper = JsonConvert.DeserializeObject<DailyGiftInfoSaver>(json);
 
-                if (wrapper.CollectedGiftDate > DateTime.Today)
+                if (wrapper.CollectedGiftDate.Date > DateTime.Today.Date)
                 {
                     Debug.LogWarning("Invalid saved date detected. Resetting gift data.");
                     ResetGift();

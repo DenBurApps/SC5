@@ -16,6 +16,13 @@ namespace Games
             StartCoroutine(DisablingCoroutine());
         }
 
+        public void EnableWithSpins(int freeSpins)
+        {
+            _winAmount.gameObject.SetActive(true);
+            _winAmount.text = freeSpins + " Free Spins";
+            StartCoroutine(DisablingCoroutine());
+        }
+
         public void Disable()
         {
             _winAmount.gameObject.SetActive(false);

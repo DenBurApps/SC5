@@ -19,20 +19,32 @@ namespace DailyBonus
         [SerializeField] private TMP_Text _totalWinText;
         [SerializeField] private TMP_Text _topText;
         [SerializeField] private Button _getButton;
+        [SerializeField] private CanvasGroup _canvasGroup;
         
         private readonly int[] _availableCoins = { 5, 15, 25, 35, 50, 75, 100 };
         private int _totalWin;
         private List<Chest> _openedChests = new List<Chest>();
 
         public event Action DailyBonusCollected;
-        
-        private void OnEnable()
+
+        private void Start()
         {
+            DisableScreen();
+        }
+
+        public void EnableScreen()
+        {
+            _canvasGroup.alpha = 1;
+            _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = true;
             InitializeScreen();
         }
 
-        private void OnDisable()
+        public void DisableScreen()
         {
+            _canvasGroup.alpha = 0;
+            _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
             CleanupScreen();
         }
 
@@ -116,7 +128,7 @@ namespace DailyBonus
         {
             PlayerBalanceController.IncreaseBalance(_totalWin);
             DailyBonusCollected?.Invoke();
-            gameObject.SetActive(false);
+            DisableScreen();
         }
     }
 }

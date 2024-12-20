@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Scroll
   m_EditorClassIdentifier: 
   _sprite: {fileID: 21300000, guid: e84c988300dc7f640b64b79e61d6e9c1, type: 3}
-  _type: 2
+  _type: 4

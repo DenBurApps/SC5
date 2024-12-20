@@ -4653,6 +4653,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb30a3dd10bcb394e97ee0d9f3748e86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _decimalColor: {r: 1, g: 1, b: 1, a: 0.39215687}
   _linesInputController: {fileID: 869575493}
   _playerBalance: {fileID: 309974869}
   _winAmount: {fileID: 2115774047}
@@ -5299,9 +5300,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
   - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
   - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  _spinSpeed: 40
+  _spinSpeed: 7
   _spinDuration: 2
-  _verticalOffset: 9
+  _verticalOffset: 3.5
   _layoutGroup: {fileID: 996942796}
 --- !u!114 &1143896825
 MonoBehaviour:
@@ -7817,7 +7818,7 @@ MonoBehaviour:
       Multiplier: 500
     - HitCount: 3
       Multiplier: 1000
-  - SlotType: 2
+  - SlotType: 4
     Multipliers:
     - HitCount: 1
       Multiplier: 1
@@ -7825,7 +7826,7 @@ MonoBehaviour:
       Multiplier: 2
     - HitCount: 3
       Multiplier: 3
-  - SlotType: 3
+  - SlotType: 5
     Multipliers:
     - HitCount: 1
       Multiplier: 3
@@ -7833,7 +7834,7 @@ MonoBehaviour:
       Multiplier: 6
     - HitCount: 3
       Multiplier: 9
-  - SlotType: 4
+  - SlotType: 6
     Multipliers:
     - HitCount: 1
       Multiplier: 6
@@ -7841,7 +7842,7 @@ MonoBehaviour:
       Multiplier: 10
     - HitCount: 3
       Multiplier: 15
-  - SlotType: 5
+  - SlotType: 7
     Multipliers:
     - HitCount: 1
       Multiplier: 20
@@ -7932,9 +7933,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
   - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
   - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  _spinSpeed: 40
+  _spinSpeed: 7
   _spinDuration: 2
-  _verticalOffset: 9
+  _verticalOffset: 3.5
   _layoutGroup: {fileID: 1737153886}
 --- !u!114 &1526113628
 MonoBehaviour:
@@ -10385,9 +10386,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
   - {fileID: 11400000, guid: fbe89c0fcac827342a2257e6becfadb0, type: 2}
   - {fileID: 11400000, guid: dbb0da6cd09650a4a81a2049ba1396cf, type: 2}
-  _spinSpeed: 40
+  _spinSpeed: 7
   _spinDuration: 2
-  _verticalOffset: 9
+  _verticalOffset: 3.5
   _layoutGroup: {fileID: 1354818289}
 --- !u!1 &2002248566
 GameObject:

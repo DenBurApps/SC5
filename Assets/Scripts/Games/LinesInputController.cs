@@ -23,24 +23,37 @@ namespace Games
         private void Start()
         {
             CurrentLines = MinLines;
+            UpdateLineDisplay();
+            ToggleButtons();
         }
 
         private void OnEnable()
         {
-            if (_plusButton && _minusButton != null)
-            {
+            if (_plusButton != null)
                 _plusButton.onClick.AddListener(IncreaseLine);
+            if (_minusButton != null)
                 _minusButton.onClick.AddListener(DecreaseLine);
-            }
         }
 
         private void OnDisable()
         {
-            if (_plusButton && _minusButton != null)
-            {
+            if (_plusButton != null)
                 _plusButton.onClick.RemoveListener(IncreaseLine);
+            if (_minusButton != null)
                 _minusButton.onClick.RemoveListener(DecreaseLine);
-            }
+        }
+
+        public void EnableOneLine()
+        {
+            _plusButton.interactable = false;
+            _minusButton.interactable = false;
+            CurrentLines = 1;
+            LinesChanged?.Invoke(CurrentLines);
+        }
+
+        public void ReturnToDefault()
+        {
+            ToggleButtons();
         }
 
         private void IncreaseLine()
@@ -61,14 +74,19 @@ namespace Games
 
         private void UpdateLineDisplay()
         {
-            ToggleButtons();
+            if (_currentLineText != null)
+            {
+                _currentLineText.text = CurrentLines.ToString();
+            }
         }
 
         private void ToggleButtons()
         {
-            int activeLines = 0;
+            if (_plusButton != null)
+                _plusButton.interactable = CurrentLines < _maxLines;
 
-            _minusButton.interactable = activeLines > _minLines;
+            if (_minusButton != null)
+                _minusButton.interactable = CurrentLines > _minLines;
         }
     }
 }

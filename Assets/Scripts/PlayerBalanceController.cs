@@ -24,7 +24,6 @@ public static class PlayerBalanceController
         if (FreeSpinsCount > 0)
         {
             FreeSpinsCount--;
-            amount = 50;
             OnFreeSpinsChanged?.Invoke(FreeSpinsCount);
         }
 

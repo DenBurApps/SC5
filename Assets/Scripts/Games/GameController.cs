@@ -11,6 +11,7 @@ namespace Games
 {
     public class GameController : MonoBehaviour
     {
+        [SerializeField] private Color _decimalColor;
         [SerializeField] private LinesInputController _linesInputController;
         [SerializeField] private TMP_Text _playerBalance;
         [SerializeField] private TMP_Text _winAmount;
@@ -61,13 +62,13 @@ namespace Games
         {
             _notEnoughPopup.SetActive(false);
             _jackpotPlane.gameObject.SetActive(false);
-            _playerBalance.text = PlayerBalanceController.CurrentBalance.ToString();
             UpdateLinesCount(1);
             UpdateWinText(0);
             _rules.SetActive(true);
             _spinButton.gameObject.SetActive(true);
             _animatedSpinButton.SetActive(false);
             _betInputer.ToggleButtons(true);
+            UpdateBalanceText(PlayerBalanceController.CurrentBalance);
         }
 
         public void OnSpinClicked()
@@ -117,7 +118,9 @@ namespace Games
 
         private void UpdateBalanceText(int value)
         {
-            _playerBalance.text = value.ToString();
+            string decimalColorHex = ColorUtility.ToHtmlStringRGBA(_decimalColor);
+            
+            _playerBalance.text = $"{value}<color=#{decimalColorHex}>.00</color>";
         }
 
         private void StartSpin()
@@ -235,7 +238,9 @@ namespace Games
                 _winAmountPlane.Disable();
             }
 
-            _winAmount.text = win.ToString();
+            string decimalColorHex = ColorUtility.ToHtmlStringRGBA(_decimalColor);
+            
+            _winAmount.text = $"{win}<color=#{decimalColorHex}>.00</color>";
         }
 
         private void DisableAllStars()

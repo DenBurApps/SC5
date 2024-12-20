@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,8 @@ namespace Games
         [SerializeField] private TMP_Text _currentBetText;
 
         private int _currentBet = 10;
+
+        public event Action BetChanged;
 
         public int CurrentBet => _currentBet;
 
@@ -28,13 +31,27 @@ namespace Games
 
         private void Start()
         {
-            UpdateBetUI();
+            _currentBetText.text = _currentBet.ToString();
         }
 
         public void ToggleButtons(bool status)
         {
             _plusButton.interactable = status;
             _minusButton.interactable = status;
+        }
+
+        public void EnableFreeSpinsMode()
+        {
+            ToggleButtons(false);
+            _currentBet = 5;
+            BetChanged?.Invoke();
+            _currentBetText.text = _currentBet.ToString();
+        }
+
+        public void ReturnToDefault()
+        {
+            ToggleButtons(true);
+            ChangeBet(10);
         }
 
         private void OnPlusButtonClicked()
@@ -52,6 +69,7 @@ namespace Games
             _currentBet = Mathf.Clamp(_currentBet + amount, 10, PlayerBalanceController.CurrentBalance);
 
             UpdateBetUI();
+            BetChanged?.Invoke();
         }
 
         private void UpdateBetUI()

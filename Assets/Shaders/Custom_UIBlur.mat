@@ -34,7 +34,7 @@ Material:
     - _ColorMask: 15
     - _IsAlphaMasked: 1
     - _IsSpriteVisible: 1
-    - _Radius: 42.7
+    - _Radius: 51.6
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0

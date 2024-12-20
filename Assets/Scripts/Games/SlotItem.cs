@@ -16,6 +16,8 @@ namespace Games
     {
         Empty,
         Bar,
+        Wild,
+        Clover,
         [Header("ChinaStreet")]
         Scroll,
         Bongo,
@@ -26,5 +28,21 @@ namespace Games
         Cherry,
         Grape,
         Melon,
+        [Header("JungleMystique")]
+        Lava,
+        PurpleRock,
+        BlueRock,
+        Wood,
+        PinkPlant,
+        GreenPlant,
+        Palm,
+        BluePlant,
+        [Header("SpinFestival")]
+        Coin,
+        Hat,
+        Firework,
+        Clapper,
+        Lamp,
+        Fan
     }
 }

@@ -129,6 +129,8 @@ namespace Games
 
         private List<SlotItem> GenerateRandomResults()
         {
+            _items.Shuffle();
+            
             List<SlotItem> results = new List<SlotItem>();
             for (int i = 0; i < _slotItemHolders.Count; i++)
             {
@@ -144,8 +146,21 @@ namespace Games
             {
                 throw new InvalidOperationException("No items available to select from.");
             }
-
+            
             return _items[Random.Range(0, _items.Count)];
+        }
+        
+    }
+}
+
+public static class ListExtensions
+{
+    public static void Shuffle<T>(this IList<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int randomIndex = Random.Range(0, i + 1);
+            (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
         }
     }
 }

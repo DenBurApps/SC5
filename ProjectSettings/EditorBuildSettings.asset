@@ -8,4 +8,19 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/InitializeScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/MainScene.unity
+    guid: 5cf0a19897babaa4cab92fd53e285c3c
+  - enabled: 1
+    path: Assets/Scenes/BambooFortuneScene.unity
+    guid: fc9123825d0c72348b818f707141f5f1
+  - enabled: 1
+    path: Assets/Scenes/ChinaStreetScene.unity
+    guid: 10a4b01d24e45b643a7fc3d02d7b14ad
+  - enabled: 1
+    path: Assets/Scenes/JungleMystiqueScene.unity
+    guid: 5344f14b23ab686438b30532d6cfac7d
+  - enabled: 1
+    path: Assets/Scenes/SpinFestivalScene.unity
+    guid: 23f26a56538d5a3448eb1efe5e5eb086
   m_configObjects: {}
