@@ -25,6 +25,8 @@ namespace Games
         [SerializeField] private List<WinLine> _winLines;
         [SerializeField] private MultiplierManager _multiplierManager;
         [SerializeField] private GameObject _rules;
+        [SerializeField] private ParticleSystem[] _particles;
+        [SerializeField] private ParticleSystem _freeSpinsGlow;
 
         [SerializeField] private List<SlotColumn> _reels;
 
@@ -110,6 +112,7 @@ namespace Games
                 _freeSpinsCountText.text = count.ToString();
                 _winAmountPlane.EnableWithSpins(count);
                 _playerFreeSpinsCount = count;
+                _freeSpinsGlow.Play();
 
                 _betInputer.EnableFreeSpinsMode();
                 _linesInputController.EnableOneLine();
@@ -117,6 +120,7 @@ namespace Games
             }
 
             _freeSpinsCountText.enabled = false;
+            _freeSpinsGlow.Stop();
             _betInputer.ReturnToDefault();
             _linesInputController.ReturnToDefault();
         }
@@ -230,6 +234,7 @@ namespace Games
                         int freeSpins = Mathf.Min(count, 5);
                         PlayerBalanceController.AddFreeSpins(freeSpins);
                         _winAmountPlane.EnableWithSpins(freeSpins);
+                        _freeSpinsGlow.Play();
                         Debug.Log($"Free Spins Awarded: {freeSpins} for Type.Clover combination");
                     }
                     
@@ -243,6 +248,7 @@ namespace Games
                     foreach (var holder in contributingItems)
                     {
                         holder.ToggleFlashAnimation(true);
+                        SpawnParticleAtPosition(holder.transform.position);
                     }
 
                     win += _currentBet * _multiplierManager.GetMultiplier(type, finalCount);
@@ -290,5 +296,31 @@ namespace Games
                 reel.DisableAllFlashAnimations();
             }
         }
+        
+        private void DisableAllParticles()
+        {
+            foreach (var particle in _particles)
+            {
+                if (particle.IsAlive()) particle.Stop();
+            }
+        }
+        
+        private ParticleSystem GetAvailableParticle()
+        {
+            var particle = _particles.FirstOrDefault(p => !p.IsAlive());
+     
+            return particle;
+        }
+
+        private void SpawnParticleAtPosition(Vector3 position)
+        {
+            var particle = GetAvailableParticle();
+            if (particle != null)
+            {
+                particle.transform.position = position;
+                particle.Play();
+            }
+        }
+        
     }
 }

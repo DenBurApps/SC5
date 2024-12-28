@@ -18,6 +18,7 @@ namespace ShopScreen
         [SerializeField] private GameObject _notEnoughPlane;
         [SerializeField] private LuckTestScreen _luckTestScreen;
         [SerializeField] private CanvasGroup _canvasGroup;
+        [SerializeField] private ParticleSystem _glow;
 
         private void OnEnable()
         {
@@ -44,6 +45,7 @@ namespace ShopScreen
             _canvasGroup.alpha = 1;
             _canvasGroup.interactable = true;
             _canvasGroup.blocksRaycasts = true;
+            _glow.Play();
         }
 
         public void DisableScreen()
@@ -51,6 +53,7 @@ namespace ShopScreen
             _canvasGroup.alpha = 0;
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;
+            _glow.Stop();
         }
 
         private void OnTestLuckClicked()

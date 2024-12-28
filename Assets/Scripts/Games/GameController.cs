@@ -25,6 +25,7 @@ namespace Games
         [SerializeField] private List<WinLine> _winLines;
         [SerializeField] private MultiplierManager _multiplierManager;
         [SerializeField] private GameObject _rules;
+        [SerializeField] private ParticleSystem[] _particles;
 
         [SerializeField] private List<SlotColumn> _reels;
 
@@ -69,6 +70,8 @@ namespace Games
             _animatedSpinButton.SetActive(false);
             _betInputer.ToggleButtons(true);
             UpdateBalanceText(PlayerBalanceController.CurrentBalance);
+
+            DisableAllParticles();
         }
 
         public void OnSpinClicked()
@@ -85,7 +88,6 @@ namespace Games
 
             PlayerBalanceController.DecreaseBalance(totalBetCost);
 
-            Debug.Log("clicked");
             StartSpin();
         }
 
@@ -166,12 +168,11 @@ namespace Games
                 if (firstNonEmpty != null)
                 {
                     firstNonEmpty.ToggleFlashAnimation(true);
+                    SpawnParticleAtPosition(firstNonEmpty.transform.position);
+                    
                     win += _currentBet * _multiplierManager.GetMultiplier(firstNonEmpty.SlotItem.Type, 1);
-                    Debug.Log(firstNonEmpty.SlotItem.Type);
-                    Debug.Log(_multiplierManager.GetMultiplier(firstNonEmpty.SlotItem.Type, 1));
-                    Debug.Log(win);
                 }
-
+                
                 return win;
             }
 
@@ -186,18 +187,13 @@ namespace Games
                     if (matchingSecond != null)
                     {
                         firstNonEmpty.ToggleFlashAnimation(true);
+                        SpawnParticleAtPosition(firstNonEmpty.transform.position);
                         matchingSecond.ToggleFlashAnimation(true);
+                        SpawnParticleAtPosition(matchingSecond.transform.position);
                         win += _currentBet * _multiplierManager.GetMultiplier(firstNonEmpty.SlotItem.Type, 2);
-
-                        Debug.Log(firstNonEmpty.SlotItem.Type);
-                        Debug.Log(_multiplierManager.GetMultiplier(firstNonEmpty.SlotItem.Type, 1));
-
-                        Debug.Log(matchingSecond.SlotItem.Type);
-                        Debug.Log(_multiplierManager.GetMultiplier(matchingSecond.SlotItem.Type, 1));
-                        Debug.Log(win);
                     }
                 }
-
+                
                 return win;
             }
 
@@ -208,14 +204,11 @@ namespace Games
                     foreach (var holder in group)
                     {
                         holder.ToggleFlashAnimation(true);
+                        SpawnParticleAtPosition(holder.transform.position);
                     }
 
                     win += _currentBet * _multiplierManager.GetMultiplier(group.Key, group.Count());
                     
-                    Debug.Log(group.Key);
-                    Debug.Log(group.Count());
-                    Debug.Log(win);
-
                     if (group.Key == Type.Bar && group.Count() >= 3)
                     {
                         _jackpotPlane.Enable(win);
@@ -225,8 +218,7 @@ namespace Games
 
             return win;
         }
-
-
+        
         private void UpdateWinText(int win)
         {
             if (win > 0)
@@ -248,6 +240,31 @@ namespace Games
             foreach (var reel in _reels)
             {
                 reel.DisableAllFlashAnimations();
+            }
+        }
+
+        private void DisableAllParticles()
+        {
+            foreach (var particle in _particles)
+            {
+                if (particle.IsAlive()) particle.Stop();
+            }
+        }
+        
+        private ParticleSystem GetAvailableParticle()
+        {
+            var particle = _particles.FirstOrDefault(p => !p.IsAlive());
+     
+            return particle;
+        }
+
+        private void SpawnParticleAtPosition(Vector3 position)
+        {
+            var particle = GetAvailableParticle();
+            if (particle != null)
+            {
+                particle.transform.position = position;
+                particle.Play();
             }
         }
     }

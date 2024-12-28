@@ -27,6 +27,7 @@ namespace LuckTest
         [SerializeField] private GameObject _notEnoughBalancePopup;
         [SerializeField] private GameObject _mainScreen;
         [SerializeField] private CanvasGroup _canvasGroup;
+        [SerializeField] private ParticleSystem _coins, _firework, _cloud;
 
         private readonly int[] _availableCoins =
         {
@@ -116,6 +117,8 @@ namespace LuckTest
         {
             _openedChests.Add(chest);
             UpdateTopText();
+            _coins.transform.position = chest.transform.position;
+            _coins.Play();
 
             if (_openedChests.Count >= _chestsToOpen)
             {
@@ -132,6 +135,7 @@ namespace LuckTest
             _totalWinText.text = "+" + _totalWin;
 
             _totalWinPanel.SetActive(true);
+            _firework.Play();
             ManageButtonsState(showGetButton: false, showTryButton: true, showShowAllButton: true);
         }
 
@@ -160,6 +164,7 @@ namespace LuckTest
                 chest.ShowWin();
             }
 
+            _cloud.Play();
             ManageButtonsState(showGetButton: true, showTryButton: false, showShowAllButton: false);
         }
 

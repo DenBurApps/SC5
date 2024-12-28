@@ -16,6 +16,7 @@ namespace MainScreen
         [SerializeField] private Button _spinFestivalButton;
         [SerializeField] private TMP_Text _playerBalance;
         [SerializeField] private CanvasGroup _canvasGroup;
+        [SerializeField] private ParticleSystem[] _particles;
 
         private void Start()
         {
@@ -48,6 +49,11 @@ namespace MainScreen
             _canvasGroup.alpha = 1;
             _canvasGroup.interactable = true;
             _canvasGroup.blocksRaycasts = true;
+
+            foreach (var particle in _particles)
+            {
+                particle.Play();
+            }
         }
 
         public void DisableScreen()
@@ -55,6 +61,11 @@ namespace MainScreen
             _canvasGroup.alpha = 0;
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;
+            
+            foreach (var particle in _particles)
+            {
+                particle.Stop();
+            }
         }
         
         private void UpdateBalance(int balance)

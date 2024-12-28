@@ -13,14 +13,15 @@ namespace DailyBonus
         private const int MaxChestsToOpen = 3;
         private const string InitialTopText = "Pick 3 chests";
         private const string GameOverTopText = "Trying is over";
-        
+
         [SerializeField] private List<Chest> _chests;
         [SerializeField] private GameObject _totalWinPanel;
         [SerializeField] private TMP_Text _totalWinText;
         [SerializeField] private TMP_Text _topText;
         [SerializeField] private Button _getButton;
         [SerializeField] private CanvasGroup _canvasGroup;
-        
+        [SerializeField] private ParticleSystem _coinsParticle, _firework;
+
         private readonly int[] _availableCoins = { 5, 15, 25, 35, 50, 75, 100 };
         private int _totalWin;
         private List<Chest> _openedChests = new List<Chest>();
@@ -51,7 +52,7 @@ namespace DailyBonus
         private void InitializeScreen()
         {
             ResetScreen();
-            
+
             foreach (var chest in _chests)
             {
                 chest.Enable(GetRandomCoinValue());
@@ -84,6 +85,8 @@ namespace DailyBonus
         private void OnChestOpened(Chest chest)
         {
             _openedChests.Add(chest);
+            _coinsParticle.transform.position = chest.transform.position;
+            _coinsParticle.Play();
 
             if (_openedChests.Count >= MaxChestsToOpen)
             {
@@ -100,6 +103,7 @@ namespace DailyBonus
             _totalWinText.text = "+" + _totalWin.ToString();
 
             _totalWinPanel.SetActive(true);
+            _firework.Play();
         }
 
         private void MakeChestsUninteractive()
