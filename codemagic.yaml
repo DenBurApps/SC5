@@ -39,7 +39,7 @@ workflows:
           xcode-project use-profiles
       - name: Set the build number
         script: | 
-          BUILD_NUMBER=2
+          BUILD_NUMBER=3
           cd $UNITY_IOS_DIR
           agvtool new-version -all $BUILD_NUMBER
       - name: Install pods
