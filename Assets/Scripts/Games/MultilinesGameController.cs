@@ -9,116 +9,158 @@ namespace Games
 {
     public class MultilinesGameController : MonoBehaviour
     {
+        private const int MinMatchingSymbols = 3;
+        private const int MaxMatchingSymbols = 5;
+
+        [Header("UI References")]
         [SerializeField] private TMP_Text _freeSpinsCountText;
+
         [SerializeField] private Color _decimalColor;
-        [SerializeField] private LinesInputController _linesInputController;
         [SerializeField] private TMP_Text _playerBalance;
         [SerializeField] private TMP_Text _winAmount;
         [SerializeField] private TMP_Text _totalBetText;
-        [SerializeField] private WinAmountPlane _winAmountPlane;
-        [SerializeField] private BetController _betInputer;
         [SerializeField] private Button _spinButton;
         [SerializeField] private GameObject _animatedSpinButton;
         [SerializeField] private Button _homeButton;
-        [SerializeField] private JackpotPlane _jackpotPlane;
         [SerializeField] private GameObject _notEnoughPopup;
-        [SerializeField] private List<WinLine> _winLines;
-        [SerializeField] private MultiplierManager _multiplierManager;
         [SerializeField] private GameObject _rules;
+
+
+        [Header("Game Components")]
+        [SerializeField] private List<SlotColumn> _reels;
+        [SerializeField] private SlotReelsHolder _slotReelsHolder;
+
+        [SerializeField] private List<WinLine> _winLines;
+        [SerializeField] private WinAmountPlane _winAmountPlane;
+        [SerializeField] private JackpotPlane _jackpotPlane;
+        [SerializeField] private LinesInputController _linesInputController;
+        [SerializeField] private BetController _betInputer;
+        [SerializeField] private MultiplierManager _multiplierManager;
         [SerializeField] private ParticleSystem[] _particles;
         [SerializeField] private ParticleSystem _freeSpinsGlow;
+        [SerializeField] private GameType _gameType;
+        [SerializeField] private AudioSource _winSound;
+        [SerializeField] private AudioSource _spinSound;
 
-        [SerializeField] private List<SlotColumn> _reels;
-
+        private Queue<ParticleSystem> _particlePool;
+        
         private int _currentBet;
         private int _currentLines;
-        private int _reelsStopped;
         private int _playerFreeSpinsCount;
+        private bool _isSpinning;
 
-        private void OnEnable()
+        private void Awake()
         {
-            PlayerBalanceController.OnBalanceChanged += UpdateBalanceText;
-            PlayerBalanceController.OnFreeSpinsChanged += OnFreeSpinsActive;
-            _spinButton.onClick.AddListener(OnSpinClicked);
-            _homeButton.onClick.AddListener(ReturnToMainScene);
-            _linesInputController.LinesChanged += UpdateLinesCount;
-            _betInputer.BetChanged += UpdateTotalBetText;
-
-            foreach (var reel in _reels)
-            {
-                reel.OnStartSpinning += OnReelStartSpin;
-                reel.OnStoppedSpinning += OnReelStopped;
-            }
+            _particlePool = new Queue<ParticleSystem>(_particles);
         }
 
-        private void OnDisable()
-        {
-            PlayerBalanceController.OnBalanceChanged -= UpdateBalanceText;
-            PlayerBalanceController.OnFreeSpinsChanged -= OnFreeSpinsActive;
-            _spinButton.onClick.RemoveListener(OnSpinClicked);
-            _homeButton.onClick.RemoveListener(ReturnToMainScene);
-            _linesInputController.LinesChanged -= UpdateLinesCount;
-            _betInputer.BetChanged -= UpdateTotalBetText;
+        private void Start() => InitializeGameState();
 
-            foreach (var reel in _reels)
-            {
-                reel.OnStartSpinning -= OnReelStartSpin;
-                reel.OnStoppedSpinning -= OnReelStopped;
-            }
-        }
+        private void OnEnable() => SubscribeToEvents();
 
-        private void Start()
+        private void OnDisable() => UnsubscribeFromEvents();
+
+        private void InitializeGameState()
         {
             _notEnoughPopup.SetActive(false);
             _jackpotPlane.gameObject.SetActive(false);
-            UpdateBalanceText(PlayerBalanceController.CurrentBalance);
-            OnFreeSpinsActive(PlayerBalanceController.FreeSpinsCount);
-            UpdateLinesCount(_linesInputController.CurrentLines);
-            UpdateWinText(0);
             _rules.SetActive(true);
             _spinButton.gameObject.SetActive(true);
             _animatedSpinButton.SetActive(false);
 
-            if (_playerFreeSpinsCount <= 0)
-                _betInputer.ToggleButtons(true);
-
+            UpdateBalanceText(PlayerDataController.CurrentBalance);
+            OnFreeSpinsActive(PlayerDataController.FreeSpinsCount);
+            UpdateLinesCount(_linesInputController.CurrentLines);
+            UpdateWinText(0);
             UpdateTotalBetText();
+
+            if (_playerFreeSpinsCount <= 0)
+            {
+                _betInputer.ToggleButtons(true);
+            }
+
+            DisableAllParticles();
+        }
+
+        private void SubscribeToEvents()
+        {
+            PlayerDataController.OnBalanceChanged += UpdateBalanceText;
+            PlayerDataController.OnFreeSpinsChanged += OnFreeSpinsActive;
+            _spinButton.onClick.AddListener(OnSpinClicked);
+            _homeButton.onClick.AddListener(ReturnToMainScene);
+            _linesInputController.LinesChanged += UpdateLinesCount;
+            _betInputer.BetChanged += UpdateTotalBetText;
+            _slotReelsHolder.StartedSpin += OnReelStartSpin;
+            _slotReelsHolder.StopedSpin += OnReelStopped;
+        }
+
+        private void UnsubscribeFromEvents()
+        {
+            PlayerDataController.OnBalanceChanged -= UpdateBalanceText;
+            PlayerDataController.OnFreeSpinsChanged -= OnFreeSpinsActive;
+            _spinButton.onClick.RemoveListener(OnSpinClicked);
+            _homeButton.onClick.RemoveListener(ReturnToMainScene);
+            _linesInputController.LinesChanged -= UpdateLinesCount;
+            _betInputer.BetChanged -= UpdateTotalBetText;
+            _slotReelsHolder.StartedSpin -= OnReelStartSpin;
+            _slotReelsHolder.StopedSpin -= OnReelStopped;
         }
 
         public void OnSpinClicked()
         {
+            if (_isSpinning) return;
+
             _currentBet = _betInputer.CurrentBet;
+            int totalBetCost = CalculateTotalBet();
+            
+            if (!ValidateBet(totalBetCost)) return;
 
-            int totalBetCost = _currentBet * _currentLines;
-            UpdateTotalBetText();
-
-            if (PlayerBalanceController.CurrentBalance < totalBetCost)
-            {
-                _notEnoughPopup.SetActive(true);
-                return;
-            }
-
-            PlayerBalanceController.DecreaseBalance(totalBetCost);
-
-            Debug.Log("clicked");
+            PlayerDataController.DecreaseBalance(totalBetCost);
+            _linesInputController.DisableAllLines();
             StartSpin();
+        }
+
+        private int CalculateTotalBet()
+        {
+            int totalBet = _currentBet * _currentLines;
+            UpdateTotalBetText();
+            return totalBet;
+        }
+
+        private bool ValidateBet(int totalBetCost)
+        {
+            if (PlayerDataController.CurrentBalance >= totalBetCost) return true;
+            
+            _notEnoughPopup.SetActive(true);
+            return false;
         }
 
         private void OnFreeSpinsActive(int count)
         {
+            _playerFreeSpinsCount = count;
+            
             if (count > 0)
             {
-                _freeSpinsCountText.enabled = true;
-                _freeSpinsCountText.text = count.ToString();
-                _winAmountPlane.EnableWithSpins(count);
-                _playerFreeSpinsCount = count;
-                _freeSpinsGlow.Play();
-
-                _betInputer.EnableFreeSpinsMode();
-                _linesInputController.EnableOneLine();
+                EnableFreeSpinsMode(count);
                 return;
             }
 
+            DisableFreeSpinsMode();
+        }
+
+        private void EnableFreeSpinsMode(int count)
+        {
+            _freeSpinsCountText.enabled = true;
+            _freeSpinsCountText.text = count.ToString();
+            _winAmountPlane.EnableWithSpins(count);
+            _freeSpinsGlow.Play();
+
+            _betInputer.EnableFreeSpinsMode();
+            _linesInputController.EnableOneLine();
+        }
+
+        private void DisableFreeSpinsMode()
+        {
             _freeSpinsCountText.enabled = false;
             _freeSpinsGlow.Stop();
             _betInputer.ReturnToDefault();
@@ -129,14 +171,7 @@ namespace Games
         {
             _currentBet = _betInputer.CurrentBet;
             _currentLines = _linesInputController.CurrentLines;
-
-            int totalBetCost = _currentBet * _currentLines;
-            _totalBetText.text = totalBetCost.ToString();
-        }
-
-        private void ReturnToMainScene()
-        {
-            SceneManager.LoadScene("MainScene");
+            _totalBetText.text = (_currentBet * _currentLines).ToString();
         }
 
         private void UpdateLinesCount(int count)
@@ -145,63 +180,40 @@ namespace Games
             UpdateTotalBetText();
         }
 
+        private void StartSpin()
+        {
+            _isSpinning = true;
+            _spinSound.Play();
+            DisableAllStars();
+            _slotReelsHolder.StartSpinning();
+        }
+
         private void OnReelStartSpin()
         {
-            _spinButton.gameObject.SetActive(false);
-            _animatedSpinButton.SetActive(true);
-
-            if (_playerFreeSpinsCount <= 0)
-                _betInputer.ToggleButtons(true);
+            UpdateUIState(false);
         }
 
         private void OnReelStopped()
         {
-            _reelsStopped++;
-            if (_reelsStopped >= _reels.Count)
-            {
-                VerifyResults();
-                _reelsStopped = 0;
-            }
-        }
-
-        private void UpdateBalanceText(int value)
-        {
-            string decimalColorHex = ColorUtility.ToHtmlStringRGBA(_decimalColor);
-
-            _playerBalance.text = $"{value}<color=#{decimalColorHex}>.00</color>";
-        }
-
-        private void StartSpin()
-        {
-            DisableAllStars();
-            foreach (var reel in _reels)
-            {
-                reel.SpinReel();
-            }
+            VerifyResults();
+            _isSpinning = false;
         }
 
         private void VerifyResults()
         {
             var linesToCheck = _winLines.Take(_currentLines).Distinct().ToList();
-            int winAmount = 0;
+            int totalWin = linesToCheck.Sum(line => CalculateLineWin(line.ItemHolders));
 
-            for (int i = 0; i < linesToCheck.Count; i++)
+            if (totalWin > 0)
             {
-                var lineWin = CalculateLineWin(linesToCheck[i].ItemHolders);
-                winAmount += lineWin;
+                PlayerDataController.IncreaseBalance(totalWin);
+                WinningsManager.AddWin(_gameType, totalWin);
+                _winSound.Play();
             }
 
-            if (winAmount > 0)
-            {
-                PlayerBalanceController.IncreaseBalance(winAmount);
-            }
-
-            UpdateWinText(winAmount);
-            _spinButton.gameObject.SetActive(true);
-            _animatedSpinButton.SetActive(false);
-
-            if (_playerFreeSpinsCount <= 0)
-                _betInputer.ToggleButtons(true);
+            UpdateWinText(totalWin);
+            UpdateUIState(true);
+            _linesInputController.RestoreLines();
         }
 
         private int CalculateLineWin(List<SlotItemHolder> itemHolders)
@@ -223,80 +235,92 @@ namespace Games
                 
                 if (wildCount > 0 && !wildUsed)
                 {
-                    count += 1;
+                    count++;
                     wildUsed = true;
                 }
 
-                if (count >= 3)
+                if (count >= MinMatchingSymbols)
                 {
-                    if (type == Type.Clover)
-                    {
-                        int freeSpins = Mathf.Min(count, 5);
-                        PlayerBalanceController.AddFreeSpins(freeSpins);
-                        _winAmountPlane.EnableWithSpins(freeSpins);
-                        _freeSpinsGlow.Play();
-                        Debug.Log($"Free Spins Awarded: {freeSpins} for Type.Clover combination");
-                    }
-                    
-                    int finalCount = Mathf.Min(count, 5);
-                    
-                    var contributingItems = group
-                        .Take(finalCount - (wildUsed ? 1 : 0))
-                        .Concat(itemHolders.Where(holder => holder.SlotItem.Type == Type.Wild)
-                            .Take(wildUsed ? 1 : 0));
-
-                    foreach (var holder in contributingItems)
-                    {
-                        holder.ToggleFlashAnimation(true);
-                        SpawnParticleAtPosition(holder.transform.position);
-                    }
-
-                    win += _currentBet * _multiplierManager.GetMultiplier(type, finalCount);
-
-                    Debug.Log($"Win with Type.{type} combination: Count = {finalCount}, Wilds Used = {wildUsed}");
-                    
-                    if (type == Type.Bar && finalCount >= 3)
-                    {
-                        _jackpotPlane.Enable(win);
-                    }
+                    HandleSpecialSymbols(type, count);
+                    win += ProcessWinningCombination(group, type, count, wildUsed, itemHolders);
                     
                     if (wildUsed) break;
                 }
-            }
-            
-            if (!wildUsed)
-            {
-                Debug.Log("No valid combination found using Type.Wild.");
             }
 
             return win;
         }
 
+        private void HandleSpecialSymbols(Type type, int count)
+        {
+            if (type != Type.Clover) return;
+            
+            int freeSpins = Mathf.Min(count, MaxMatchingSymbols);
+            PlayerDataController.AddFreeSpins(freeSpins);
+            _winAmountPlane.EnableWithSpins(freeSpins);
+            _freeSpinsGlow.Play();
+        }
+
+        private int ProcessWinningCombination(IGrouping<Type, SlotItemHolder> group, Type type, int count, bool wildUsed, List<SlotItemHolder> itemHolders)
+        {
+            int finalCount = Mathf.Min(count, MaxMatchingSymbols);
+            
+            var contributingItems = group
+                .Take(finalCount - (wildUsed ? 1 : 0))
+                .Concat(itemHolders.Where(holder => holder.SlotItem.Type == Type.Wild)
+                    .Take(wildUsed ? 1 : 0));
+
+            foreach (var holder in contributingItems)
+            {
+                HighlightWinningSymbol(holder);
+            }
+
+            int win = _currentBet * _multiplierManager.GetMultiplier(type, finalCount);
+
+            if (type == Type.Bar && finalCount >= MinMatchingSymbols)
+            {
+                _jackpotPlane.Enable(win);
+            }
+
+            return win;
+        }
+
+        private void HighlightWinningSymbol(SlotItemHolder holder)
+        {
+            holder.ToggleFlashAnimation(true);
+            SpawnParticleAtPosition(holder.transform.position);
+        }
+
+        private void UpdateUIState(bool enabled)
+        {
+            _spinButton.gameObject.SetActive(enabled);
+            _animatedSpinButton.SetActive(!enabled);
+
+            if (_playerFreeSpinsCount <= 0)
+            {
+                _betInputer.ToggleButtons(enabled);
+            }
+        }
+
+        private void UpdateBalanceText(int value)
+        {
+            string decimalColorHex = ColorUtility.ToHtmlStringRGBA(_decimalColor);
+            _playerBalance.text = $"{value}<color=#{decimalColorHex}>.00</color>";
+        }
 
         private void UpdateWinText(int win)
         {
             if (win > 0)
-            {
                 _winAmountPlane.Enable(win);
-            }
             else
-            {
                 _winAmountPlane.Disable();
-            }
 
             string decimalColorHex = ColorUtility.ToHtmlStringRGBA(_decimalColor);
-
             _winAmount.text = $"{win}<color=#{decimalColorHex}>.00</color>";
         }
 
-        private void DisableAllStars()
-        {
-            foreach (var reel in _reels)
-            {
-                reel.DisableAllFlashAnimations();
-            }
-        }
-        
+        private void DisableAllStars() => _reels.ForEach(reel => reel.DisableAllFlashAnimations());
+
         private void DisableAllParticles()
         {
             foreach (var particle in _particles)
@@ -304,23 +328,20 @@ namespace Games
                 if (particle.IsAlive()) particle.Stop();
             }
         }
-        
-        private ParticleSystem GetAvailableParticle()
-        {
-            var particle = _particles.FirstOrDefault(p => !p.IsAlive());
-     
-            return particle;
-        }
 
         private void SpawnParticleAtPosition(Vector3 position)
         {
             var particle = GetAvailableParticle();
-            if (particle != null)
-            {
-                particle.transform.position = position;
-                particle.Play();
-            }
+            if (particle == null) return;
+            
+            particle.transform.position = position;
+            particle.Play();
         }
-        
+
+        private ParticleSystem GetAvailableParticle() => 
+            _particles.FirstOrDefault(p => !p.IsAlive());
+
+        private void ReturnToMainScene() => 
+            SceneLoader.LoadScene("MainScene");
     }
 }

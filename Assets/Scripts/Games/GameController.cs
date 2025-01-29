@@ -1,247 +1,248 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Games;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 using UnityEngine.UI;
 
 namespace Games
 {
     public class GameController : MonoBehaviour
     {
+        private const int MinMatchingSymbols = 3;
+        private const int MaxEmptySlots = 2;
+
+        [Header("UI References")]
         [SerializeField] private Color _decimalColor;
-        [SerializeField] private LinesInputController _linesInputController;
+
         [SerializeField] private TMP_Text _playerBalance;
         [SerializeField] private TMP_Text _winAmount;
-        [SerializeField] private WinAmountPlane _winAmountPlane;
-        [SerializeField] private BetController _betInputer;
         [SerializeField] private Button _spinButton;
         [SerializeField] private GameObject _animatedSpinButton;
         [SerializeField] private Button _homeButton;
-        [SerializeField] private JackpotPlane _jackpotPlane;
         [SerializeField] private GameObject _notEnoughPopup;
-        [SerializeField] private List<WinLine> _winLines;
-        [SerializeField] private MultiplierManager _multiplierManager;
         [SerializeField] private GameObject _rules;
-        [SerializeField] private ParticleSystem[] _particles;
 
+        [Header("Game Components")]
         [SerializeField] private List<SlotColumn> _reels;
+
+        [SerializeField] private SlotReelsHolder _slotReelsHolder;
+    
+        [SerializeField] private List<WinLine> _winLines;
+        [SerializeField] private WinAmountPlane _winAmountPlane;
+        [SerializeField] private JackpotPlane _jackpotPlane;
+        [SerializeField] private LinesInputController _linesInputController;
+        [SerializeField] private BetController _betInputer;
+        [SerializeField] private MultiplierManager _multiplierManager;
+        [SerializeField] private ParticleSystem[] _particles;
+        [SerializeField] private GameType _gameType;
+        [SerializeField] private AudioSource _winSound;
+        [SerializeField] private AudioSource _spinSound;
+        
+        private Queue<ParticleSystem> _particlePool;
 
         private int _currentBet;
         private int _currentLines;
-        private int _reelsStopped;
+        private bool _isSpinning;
 
-        private void OnEnable()
+        private void Awake()
         {
-            PlayerBalanceController.OnBalanceChanged += UpdateBalanceText;
-            _spinButton.onClick.AddListener(OnSpinClicked);
-            _homeButton.onClick.AddListener(ReturnToMainScene);
-
-            foreach (var reel in _reels)
-            {
-                reel.OnStartSpinning += OnReelStartSpin;
-                reel.OnStoppedSpinning += OnReelStopped;
-            }
+            _particlePool = new Queue<ParticleSystem>(_particles);
+            InitializeGameState();
         }
 
-        private void OnDisable()
-        {
-            PlayerBalanceController.OnBalanceChanged -= UpdateBalanceText;
-            _spinButton.onClick.RemoveListener(OnSpinClicked);
-            _homeButton.onClick.RemoveListener(ReturnToMainScene);
+        private void OnEnable() => SubscribeToEvents();
+        private void OnDisable() => UnsubscribeFromEvents();
 
-            foreach (var reel in _reels)
-            {
-                reel.OnStartSpinning -= OnReelStartSpin;
-                reel.OnStoppedSpinning -= OnReelStopped;
-            }
-        }
-
-        private void Start()
+        private void InitializeGameState()
         {
             _notEnoughPopup.SetActive(false);
             _jackpotPlane.gameObject.SetActive(false);
-            UpdateLinesCount(1);
-            UpdateWinText(0);
             _rules.SetActive(true);
             _spinButton.gameObject.SetActive(true);
             _animatedSpinButton.SetActive(false);
-            _betInputer.ToggleButtons(true);
-            UpdateBalanceText(PlayerBalanceController.CurrentBalance);
-
+            
+            UpdateLinesCount(1);
+            UpdateWinText(0);
+            UpdateUIState(true);
+            UpdateBalanceText(PlayerDataController.CurrentBalance);
             DisableAllParticles();
+        }
+
+        private void SubscribeToEvents()
+        {
+            PlayerDataController.OnBalanceChanged += UpdateBalanceText;
+            _spinButton.onClick.AddListener(OnSpinClicked);
+            _homeButton.onClick.AddListener(ReturnToMainScene);
+            _slotReelsHolder.StartedSpin += OnReelStartSpin;
+            _slotReelsHolder.StopedSpin += OnReelStopped;
+        }
+
+        private void UnsubscribeFromEvents()
+        {
+            PlayerDataController.OnBalanceChanged -= UpdateBalanceText;
+            _spinButton.onClick.RemoveListener(OnSpinClicked);
+            _homeButton.onClick.RemoveListener(ReturnToMainScene);
+            _slotReelsHolder.StartedSpin -= OnReelStartSpin;
+            _slotReelsHolder.StopedSpin -= OnReelStopped;
         }
 
         public void OnSpinClicked()
         {
-            _currentBet = _betInputer.CurrentBet;
+            if (_isSpinning) return;
 
-            int totalBetCost = _currentBet * _currentLines;
+            int totalBetCost = CalculateTotalBet();
+            if (!ValidateBet(totalBetCost)) return;
 
-            if (PlayerBalanceController.CurrentBalance < totalBetCost)
-            {
-                _notEnoughPopup.SetActive(true);
-                return;
-            }
-
-            PlayerBalanceController.DecreaseBalance(totalBetCost);
-
+            PlayerDataController.DecreaseBalance(totalBetCost);
             StartSpin();
         }
 
-        private void ReturnToMainScene()
-        {
-            SceneManager.LoadScene("MainScene");
-        }
+        private int CalculateTotalBet() => _betInputer.CurrentBet * _currentLines;
 
-        private void UpdateLinesCount(int count)
+        private bool ValidateBet(int totalBetCost)
         {
-            _currentLines = count;
-        }
-
-        private void OnReelStartSpin()
-        {
-            _spinButton.gameObject.SetActive(false);
-            _animatedSpinButton.SetActive(true);
-            _betInputer.ToggleButtons(false);
-        }
-
-        private void OnReelStopped()
-        {
-            _reelsStopped++;
-            if (_reelsStopped >= _reels.Count)
-            {
-                VerifyResults();
-                _reelsStopped = 0;
-            }
-        }
-
-        private void UpdateBalanceText(int value)
-        {
-            string decimalColorHex = ColorUtility.ToHtmlStringRGBA(_decimalColor);
+            if (PlayerDataController.CurrentBalance >= totalBetCost) return true;
             
-            _playerBalance.text = $"{value}<color=#{decimalColorHex}>.00</color>";
+            _notEnoughPopup.SetActive(true);
+            return false;
         }
 
         private void StartSpin()
         {
+            _isSpinning = true;
+            _spinSound.Play();
+            _currentBet = _betInputer.CurrentBet;
             DisableAllStars();
-            foreach (var reel in _reels)
-            {
-                reel.SpinReel();
-            }
+            _slotReelsHolder.StartSpinning();
+        }
+
+        private void OnReelStartSpin()
+        {
+            UpdateUIState(false);
+        }
+
+        private void OnReelStopped()
+        {
+            VerifyResults();
+            _isSpinning = false;
         }
 
         private void VerifyResults()
         {
             var linesToCheck = _winLines.Take(_currentLines).ToList();
-            int winAmount = 0;
+            int totalWin = linesToCheck.Sum(line => CalculateLineWin(line.ItemHolders));
 
-            for (int i = 0; i < linesToCheck.Count; i++)
+            if (totalWin > 0)
             {
-                var lineWin = CalculateLineWin(linesToCheck[i].ItemHolders);
-                winAmount += lineWin;
+                PlayerDataController.IncreaseBalance(totalWin);
+                WinningsManager.AddWin(_gameType, totalWin);
+                _winSound.Play();
             }
 
-            if (winAmount > 0)
-            {
-                PlayerBalanceController.IncreaseBalance(winAmount);
-            }
-
-            UpdateWinText(winAmount);
-            _spinButton.gameObject.SetActive(true);
-            _animatedSpinButton.SetActive(false);
-            _betInputer.ToggleButtons(true);
+            UpdateWinText(totalWin);
+            UpdateUIState(true);
         }
+
 
         private int CalculateLineWin(List<SlotItemHolder> itemHolders)
         {
-            int win = 0;
-            var groupedItems = itemHolders.GroupBy(holder => holder.SlotItem.Type);
             var nonEmptyHolders = itemHolders.Where(holder => holder.SlotItem.Type != Type.Empty).ToList();
+            int emptyCount = itemHolders.Count - nonEmptyHolders.Count;
 
-            if (itemHolders.Count(holder => holder.SlotItem.Type == Type.Empty) >= 2)
-            {
-                var firstNonEmpty = nonEmptyHolders.FirstOrDefault();
-                if (firstNonEmpty != null)
-                {
-                    firstNonEmpty.ToggleFlashAnimation(true);
-                    SpawnParticleAtPosition(firstNonEmpty.transform.position);
-                    
-                    win += _currentBet * _multiplierManager.GetMultiplier(firstNonEmpty.SlotItem.Type, 1);
-                }
-                
-                return win;
-            }
+            if (emptyCount >= MaxEmptySlots)
+                return CalculateSingleSymbolWin(nonEmptyHolders);
 
-            if (itemHolders.Any(holder => holder.SlotItem.Type == Type.Empty))
-            {
-                var firstNonEmpty = nonEmptyHolders.FirstOrDefault();
-                if (firstNonEmpty != null)
-                {
-                    var matchingSecond = nonEmptyHolders.FirstOrDefault(holder =>
-                        holder.SlotItem.Type == firstNonEmpty.SlotItem.Type && holder != firstNonEmpty);
-                    
-                    if (matchingSecond != null)
-                    {
-                        firstNonEmpty.ToggleFlashAnimation(true);
-                        SpawnParticleAtPosition(firstNonEmpty.transform.position);
-                        matchingSecond.ToggleFlashAnimation(true);
-                        SpawnParticleAtPosition(matchingSecond.transform.position);
-                        win += _currentBet * _multiplierManager.GetMultiplier(firstNonEmpty.SlotItem.Type, 2);
-                    }
-                }
-                
-                return win;
-            }
+            if (emptyCount > 0)
+                return CalculateTwoMatchingSymbolsWin(nonEmptyHolders);
 
-            foreach (var group in groupedItems)
+            return CalculateFullLineWin(itemHolders);
+        }
+
+        private int CalculateSingleSymbolWin(List<SlotItemHolder> nonEmptyHolders)
+        {
+            var firstSymbol = nonEmptyHolders.FirstOrDefault();
+            if (firstSymbol == null) return 0;
+
+            HighlightWinningSymbol(firstSymbol);
+            return _currentBet * _multiplierManager.GetMultiplier(firstSymbol.SlotItem.Type, 1);
+        }
+
+        private int CalculateTwoMatchingSymbolsWin(List<SlotItemHolder> nonEmptyHolders)
+        {
+            var firstSymbol = nonEmptyHolders.FirstOrDefault();
+            if (firstSymbol == null) return 0;
+
+            var matchingSymbol = nonEmptyHolders.FirstOrDefault(holder => 
+                holder.SlotItem.Type == firstSymbol.SlotItem.Type && holder != firstSymbol);
+
+            if (matchingSymbol == null) return 0;
+
+            HighlightWinningSymbol(firstSymbol);
+            HighlightWinningSymbol(matchingSymbol);
+            return _currentBet * _multiplierManager.GetMultiplier(firstSymbol.SlotItem.Type, 2);
+        }
+
+        private int CalculateFullLineWin(List<SlotItemHolder> itemHolders)
+        {
+            var groups = itemHolders.GroupBy(holder => holder.SlotItem.Type);
+            int totalWin = 0;
+
+            foreach (var group in groups)
             {
-                if (group.Count() >= 3)
+                if (group.Count() >= MinMatchingSymbols)
                 {
                     foreach (var holder in group)
                     {
-                        holder.ToggleFlashAnimation(true);
-                        SpawnParticleAtPosition(holder.transform.position);
+                        HighlightWinningSymbol(holder);
                     }
 
-                    win += _currentBet * _multiplierManager.GetMultiplier(group.Key, group.Count());
-                    
-                    if (group.Key == Type.Bar && group.Count() >= 3)
+                    totalWin += _currentBet * _multiplierManager.GetMultiplier(group.Key, group.Count());
+
+                    if (group.Key == Type.Bar && group.Count() >= MinMatchingSymbols)
                     {
-                        _jackpotPlane.Enable(win);
+                        _jackpotPlane.Enable(totalWin);
                     }
                 }
             }
 
-            return win;
+            return totalWin;
         }
-        
+
+        private void HighlightWinningSymbol(SlotItemHolder holder)
+        {
+            holder.ToggleFlashAnimation(true);
+            SpawnParticleAtPosition(holder.transform.position);
+        }
+
+        private void UpdateUIState(bool enabled)
+        {
+            _spinButton.gameObject.SetActive(enabled);
+            _animatedSpinButton.SetActive(!enabled);
+            _betInputer.ToggleButtons(enabled);
+        }
+
+        private void UpdateLinesCount(int count) => _currentLines = count;
+
+        private void UpdateBalanceText(int value)
+        {
+            string decimalColorHex = ColorUtility.ToHtmlStringRGBA(_decimalColor);
+            _playerBalance.text = $"{value}<color=#{decimalColorHex}>.00</color>";
+        }
+
         private void UpdateWinText(int win)
         {
             if (win > 0)
-            {
                 _winAmountPlane.Enable(win);
-            }
             else
-            {
                 _winAmountPlane.Disable();
-            }
 
             string decimalColorHex = ColorUtility.ToHtmlStringRGBA(_decimalColor);
-            
             _winAmount.text = $"{win}<color=#{decimalColorHex}>.00</color>";
         }
 
-        private void DisableAllStars()
-        {
-            foreach (var reel in _reels)
-            {
-                reel.DisableAllFlashAnimations();
-            }
-        }
+        private void DisableAllStars() => _reels.ForEach(reel => reel.DisableAllFlashAnimations());
 
         private void DisableAllParticles()
         {
@@ -250,28 +251,26 @@ namespace Games
                 if (particle.IsAlive()) particle.Stop();
             }
         }
-        
-        private ParticleSystem GetAvailableParticle()
-        {
-            var particle = _particles.FirstOrDefault(p => !p.IsAlive());
-     
-            return particle;
-        }
 
         private void SpawnParticleAtPosition(Vector3 position)
         {
             var particle = GetAvailableParticle();
-            if (particle != null)
-            {
-                particle.transform.position = position;
-                particle.Play();
-            }
+            if (particle == null) return;
+            
+            particle.transform.position = position;
+            particle.Play();
         }
-    }
-}
 
-[Serializable]
-public class WinLine
-{
-    public List<SlotItemHolder> ItemHolders;
+        private ParticleSystem GetAvailableParticle() => 
+            _particles.FirstOrDefault(p => !p.IsAlive());
+
+        private void ReturnToMainScene() =>
+            SceneLoader.LoadScene("MainScene");
+    }
+
+    [Serializable]
+    public class WinLine
+    {
+        public List<SlotItemHolder> ItemHolders;
+    }
 }

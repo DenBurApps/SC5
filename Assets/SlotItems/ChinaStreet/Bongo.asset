@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57a909fde3694c34c95ca14a0fbf1115, type: 3}
   m_Name: Bongo
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 21300000, guid: b472364ee9a01e2489fb1d06430831ca, type: 3}
+  _sprite: {fileID: 21300000, guid: 925ff34617600fd4398b07f23f28bc68, type: 3}
   _type: 5

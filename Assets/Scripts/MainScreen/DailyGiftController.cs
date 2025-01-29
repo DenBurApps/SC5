@@ -34,7 +34,6 @@ namespace MainScreen
         private void Start()
         {
             Load();
-            Debug.Log($"Gift Collected: {GiftCollected}");
         }
 
         private void SaveGiftData()
@@ -49,7 +48,6 @@ namespace MainScreen
             if (File.Exists(_savePath) && File.ReadAllText(_savePath) == json) return;
 
             File.WriteAllText(_savePath, json);
-            Debug.Log($"Data saved to: {_savePath}");
         }
 
         private void Load()
@@ -58,7 +56,6 @@ namespace MainScreen
             {
                 if (!File.Exists(_savePath))
                 {
-                    Debug.Log("No save file found.");
                     ResetGift();
                     return;
                 }

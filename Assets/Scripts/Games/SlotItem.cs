@@ -29,20 +29,22 @@ namespace Games
         Grape,
         Melon,
         [Header("JungleMystique")]
-        Lava,
-        PurpleRock,
+        Chest,
+        Parrot,
         BlueRock,
-        Wood,
-        PinkPlant,
-        GreenPlant,
-        Palm,
-        BluePlant,
+        Drums,
+        Mask,
+        Parrot2,
+        JungleBanana,
+        Tiger,
         [Header("SpinFestival")]
         Coin,
         Hat,
         Firework,
         Clapper,
         Lamp,
-        Fan
+        Fan,
+        Sandals,
+        SpinDrums
     }
 }

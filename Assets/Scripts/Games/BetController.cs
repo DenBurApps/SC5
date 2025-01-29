@@ -66,7 +66,7 @@ namespace Games
 
         private void ChangeBet(int amount)
         {
-            _currentBet = Mathf.Clamp(_currentBet + amount, 10, PlayerBalanceController.CurrentBalance);
+            _currentBet = Mathf.Clamp(_currentBet + amount, 10, PlayerDataController.CurrentBalance);
 
             UpdateBetUI();
             BetChanged?.Invoke();
@@ -76,7 +76,7 @@ namespace Games
         {
             _currentBetText.text = _currentBet.ToString();
 
-            _plusButton.interactable = _currentBet < PlayerBalanceController.CurrentBalance;
+            _plusButton.interactable = _currentBet < PlayerDataController.CurrentBalance;
             _minusButton.interactable = _currentBet > 10;
         }
     }

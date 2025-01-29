@@ -13,9 +13,9 @@ namespace LuckTest
     {
         private const int InitialChestsToOpen = 3;
         private const int TryCost = 200;
-        private const string InitialTopText = "Pick 3 chests";
+        private const string InitialTopText = "Pick 3 gifts";
         private const string GameOverTopText = "Trying is over";
-        private const string PickTextTemplate = "Pick {0} chests";
+        private const string PickTextTemplate = "Pick {0} gifts";
 
         [SerializeField] private List<Chest> _chests;
         [SerializeField] private GameObject _totalWinPanel;
@@ -141,13 +141,13 @@ namespace LuckTest
 
         private void OnTryClicked()
         {
-            if (PlayerBalanceController.CurrentBalance < TryCost)
+            if (PlayerDataController.CurrentBalance < TryCost)
             {
                 _notEnoughBalancePopup.SetActive(true);
                 return;
             }
 
-            PlayerBalanceController.DecreaseBalance(TryCost);
+            PlayerDataController.DecreaseBalance(TryCost);
 
             _chestsToOpen += 1;
             ActivateRemainingChests();
@@ -170,7 +170,7 @@ namespace LuckTest
 
         private void OnGetButtonClicked()
         {
-            PlayerBalanceController.IncreaseBalance(_totalWin);
+            PlayerDataController.IncreaseBalance(_totalWin);
             DisableScreen();
         }
 

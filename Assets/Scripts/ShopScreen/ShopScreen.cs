@@ -22,17 +22,17 @@ namespace ShopScreen
 
         private void OnEnable()
         {
-            UpdateBalance(PlayerBalanceController.CurrentBalance);
+            UpdateBalance(PlayerDataController.CurrentBalance);
             _notEnoughPlane.SetActive(false);
             
             _luckTextButton.onClick.AddListener(OnTestLuckClicked);
-            PlayerBalanceController.OnBalanceChanged += UpdateBalance;
+            PlayerDataController.OnBalanceChanged += UpdateBalance;
         }
 
         private void OnDisable()
         {
             _luckTextButton.onClick.RemoveListener(OnTestLuckClicked);
-            PlayerBalanceController.OnBalanceChanged -= UpdateBalance;
+            PlayerDataController.OnBalanceChanged -= UpdateBalance;
         }
 
         private void Start()
@@ -58,13 +58,13 @@ namespace ShopScreen
 
         private void OnTestLuckClicked()
         {
-            if (PlayerBalanceController.CurrentBalance < TestLuckCost)
+            if (PlayerDataController.CurrentBalance < TestLuckCost)
             {
                 _notEnoughPlane.SetActive(true);
                 return;
             }
             
-            PlayerBalanceController.DecreaseBalance(TestLuckCost);
+            PlayerDataController.DecreaseBalance(TestLuckCost);
             _luckTestScreen.EnableScreen();
             DisableScreen();
         }

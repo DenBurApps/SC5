@@ -11,7 +11,7 @@ namespace DailyBonus
     public class DailyBonusScreen : MonoBehaviour
     {
         private const int MaxChestsToOpen = 3;
-        private const string InitialTopText = "Pick 3 chests";
+        private const string InitialTopText = "Pick 3 gifts";
         private const string GameOverTopText = "Trying is over";
 
         [SerializeField] private List<Chest> _chests;
@@ -130,7 +130,7 @@ namespace DailyBonus
 
         private void OnGetButtonClicked()
         {
-            PlayerBalanceController.IncreaseBalance(_totalWin);
+            PlayerDataController.IncreaseBalance(_totalWin);
             DailyBonusCollected?.Invoke();
             DisableScreen();
         }

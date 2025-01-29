@@ -1,55 +1,151 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using TheraBytes.BetterUi;
+using DG.Tweening;
 using UnityEngine;
+using DanielLochner.Assets.SimpleScrollSnap;
 using Random = UnityEngine.Random;
 
 namespace Games
 {
     public class SlotColumn : MonoBehaviour
     {
-        [Header("Slot Settings")] [SerializeField]
-        private List<SlotItemHolder> _slotItemHolders;
-
+        [Header("Slot Settings")] 
+        [SerializeField] private List<SlotItemHolder> _slotItemHolders;
         [SerializeField] private List<SlotItem> _items;
+        
+        [Header("Scroll Snap Settings")]
+        [SerializeField] private SimpleScrollSnap _scrollSnap;
+        
+        [Header("Spin Animation Settings")]
+        [SerializeField] private float _startSpeed = 2f;
+        [SerializeField] private float _maxSpeed = 15f;
+        [SerializeField] private float _accelerationTime = 0.8f;
+        [SerializeField] private float _maintainSpeedTime = 1.5f;
+        [SerializeField] private float _decelerationTime = 1.2f;
+        [SerializeField] private Ease _accelerationEase = Ease.InSine;
+        [SerializeField] private Ease _decelerationEase = Ease.OutSine;
 
-        [Header("Spin Settings")] [SerializeField]
-        private float _spinSpeed = 500f;
-
-        [SerializeField] private float _spinDuration = 2f;
-        [SerializeField] private float _verticalOffset = 1.0f;
-
-        [Header("References")] [SerializeField]
-        private BetterAxisAlignedLayoutGroup _layoutGroup;
-
-        private List<SlotItem> _finalResult;
-
-        public event Action OnStartSpinning;
+        private Sequence _spinSequence;
+        private float _currentSpeed;
+        private bool _isSpinning;
+        private float _panelHeight;
         public event Action OnStoppedSpinning;
 
         private void Start()
         {
+            InitializeScrollSnap();
             DisableAllFlashAnimations();
+            ShuffleItems();
+            _panelHeight = _scrollSnap.Content.rect.height / _scrollSnap.NumberOfPanels;
+            
+            UpdateVisibleItems();
         }
 
-        public void SpinReel()
+        private void InitializeScrollSnap()
         {
-            if (_slotItemHolders == null || _slotItemHolders.Count == 0)
+            _scrollSnap.enabled = true;
+            _scrollSnap.UseInfiniteScrolling = true;
+        }
+
+        private void ShuffleItems()
+        {
+            if (_items != null && _items.Count > 0)
             {
-                Debug.LogError("Slot item holders are not assigned or empty.");
+                _items = _items.OrderBy(x => Random.value).ToList();
+            }
+        }
+
+        private void OnDisable()
+        {
+            _spinSequence?.Kill();
+        }
+
+         public void SpinReel()
+        {
+            if (_slotItemHolders == null || _slotItemHolders.Count == 0 || _scrollSnap == null)
+            {
+                Debug.LogError("Required components are not assigned.");
                 return;
             }
 
-            if (_items == null || _items.Count == 0)
+            if (_isSpinning)
             {
-                Debug.LogError("Slot items are not assigned or empty.");
                 return;
             }
+
+            StartSpinAnimation();
+        }
+
+        private void StartSpinAnimation()
+        {
+            _isSpinning = true;
             
-            _finalResult = GenerateRandomResults();
-            StartCoroutine(SpinCoroutine());
+            _currentSpeed = _startSpeed;
+            
+            _spinSequence?.Kill();
+            _spinSequence = DOTween.Sequence();
+            
+            _spinSequence.Append(
+                DOTween.To(() => _currentSpeed, x => {
+                    _currentSpeed = x;
+                    ScrollContent();
+                }, _maxSpeed, _accelerationTime)
+                .SetEase(_accelerationEase)
+            );
+
+            _spinSequence.Append(
+                DOTween.To(() => _currentSpeed, x => {
+                    _currentSpeed = x;
+                    ScrollContent();
+                    UpdateVisibleItems();
+                }, _maxSpeed, _maintainSpeedTime)
+                .SetEase(Ease.Linear)
+            );
+
+            _spinSequence.Append(
+                DOTween.To(() => _currentSpeed, x => {
+                    _currentSpeed = x;
+                    ScrollContent();
+                }, 0, _decelerationTime)
+                .SetEase(_decelerationEase)
+            );
+
+            _spinSequence.OnComplete(() => {
+                CompleteSpinAnimation();
+            });
+
+            _spinSequence.Play();
+        }
+
+        private void ScrollContent()
+        {
+            if (_scrollSnap != null)
+            {
+                float newPosition = _scrollSnap.Content.anchoredPosition.y - (_currentSpeed * Time.deltaTime * 500);
+
+                _scrollSnap.Content.anchoredPosition = new Vector2(
+                    _scrollSnap.Content.anchoredPosition.x,
+                    newPosition
+                );
+            }
+        }
+
+        private void UpdateVisibleItems()
+        {
+            float currentPosition = Mathf.Abs(_scrollSnap.Content.anchoredPosition.y);
+
+            for (int i = 0; i < _slotItemHolders.Count; i++)
+            {
+                int itemIndex = Mathf.FloorToInt(currentPosition / _panelHeight) % _items.Count;
+                _slotItemHolders[i].SetItem(_items[(itemIndex + i) % _items.Count]);
+            }
+        }
+        
+        private void CompleteSpinAnimation()
+        {
+            _isSpinning = false;
+            OnStoppedSpinning?.Invoke();
         }
 
         public void DisableAllFlashAnimations()
@@ -58,109 +154,6 @@ namespace Games
             {
                 slotItemHolder.ToggleFlashAnimation(false);
             }
-        }
-
-        private IEnumerator SpinCoroutine()
-        {
-            float elapsedTime = 0f;
-            OnStartSpinning?.Invoke();
-
-            while (elapsedTime < _spinDuration)
-            {
-                foreach (var slotItemHolder in _slotItemHolders)
-                {
-                    slotItemHolder.transform.Translate(Vector3.down * (_spinSpeed * Time.deltaTime));
-
-                    if (slotItemHolder.transform.localPosition.y <= -slotItemHolder.GetHeight() * _verticalOffset)
-                    {
-                        LoopItemToTop(slotItemHolder);
-                    }
-                }
-
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-
-            AlignToFinalResult();
-        }
-
-        private float GetTopPosition()
-        {
-            float topY = float.MinValue;
-            foreach (var slotItemHolder in _slotItemHolders)
-            {
-                if (slotItemHolder.transform.localPosition.y > topY)
-                    topY = slotItemHolder.transform.localPosition.y;
-            }
-
-            return topY;
-        }
-
-        private void LoopItemToTop(SlotItemHolder itemHolder)
-        {
-            float topPosition = GetTopPosition();
-
-            itemHolder.transform.localPosition = new Vector3(
-                itemHolder.transform.localPosition.x,
-                topPosition + itemHolder.GetHeight(),
-                itemHolder.transform.localPosition.z
-            );
-
-            itemHolder.SetItem(GetRandomItem());
-        }
-
-        private void AlignToFinalResult()
-        {
-            float spacing = _slotItemHolders[0].GetHeight();
-
-            for (int i = 0; i < _slotItemHolders.Count; i++)
-            {
-                //_slotItemHolders[i].SetItem(_finalResult[i % _finalResult.Count]);
-                /*_slotItemHolders[i].transform.localPosition = new Vector3(
-                    0,
-                    (_slotItemHolders.Count - i - 1) * spacing,
-                    0
-                );*/
-            }
-
-            _layoutGroup.SetLayoutVertical();
-            OnStoppedSpinning?.Invoke();
-        }
-
-        private List<SlotItem> GenerateRandomResults()
-        {
-            _items.Shuffle();
-            
-            List<SlotItem> results = new List<SlotItem>();
-            for (int i = 0; i < _slotItemHolders.Count; i++)
-            {
-                results.Add(GetRandomItem());
-            }
-            
-            return results;
-        }
-
-        private SlotItem GetRandomItem()
-        {
-            if (_items == null || _items.Count == 0)
-            {
-                throw new InvalidOperationException("No items available to select from.");
-            }
-            
-            return _items[Random.Range(0, _items.Count)];
-        }
-        
-    }
-}
-
-public static class ListExtensions
-{
-    public static void Shuffle<T>(this IList<T> list)
-    {
-        for (int i = list.Count - 1; i > 0; i--)
-        {
-            int randomIndex = Random.Range(0, i + 1);
-            (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
         }
     }
 }

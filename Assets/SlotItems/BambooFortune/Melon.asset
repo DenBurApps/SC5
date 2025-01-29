@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57a909fde3694c34c95ca14a0fbf1115, type: 3}
   m_Name: Melon
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 21300000, guid: 4d39e2d5a452b8f44b7bc0d8248a419c, type: 3}
+  _sprite: {fileID: 21300000, guid: 7663ba4734899954c83ab3dfdddfebb0, type: 3}
   _type: 11
